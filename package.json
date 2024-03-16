@@ -54,5 +54,8 @@
       "rxjs"
     ]
   },
+  "allowAny": [
+    "astro"
+  ],
   "license": "MIT"
 }

@@ -13,13 +13,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install package manager
+        run: corepack enable
+      - name: print package manager version
+        run: yarn --version
+      - name: configure package manager
         run: |
-          corepack enable
-          yarn --version
           yarn config set npmScopes.my-org.npmRegistryServer "https://npm.pkg.github.com"
           yarn config set npmScopes.my-org.npmAlwaysAuth true
           yarn config set npmScopes.my-org.npmAuthToken $NPM_AUTH_TOKEN
-          yarn config set cacheFolder './.yarn/cache'
+          yarn config set cacheFolder ./.yarn/cache
           yarn config set nodeLinker node-modules
           yarn config set enableTelemetry false
           yarn config set enableGlobalCache false
