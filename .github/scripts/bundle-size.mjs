@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { build } from 'esbuild'
 
-const CLIENT_RUNTIME_PATH = 'packages/astro/src/runtime/client/'
+const CLIENT_RUNTIME_PATH = 'src/content/index.mdx'
 
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return '0 B'
@@ -73,7 +73,7 @@ async function bundle(files) {
     sourcemap: false,
     target: ['es2018'],
     outdir: 'out',
-    external: ['astro:*', 'aria-query', 'axobject-query'],
+    external: ['astro:*'],
     metafile: true,
   })
 

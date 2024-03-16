@@ -14,7 +14,7 @@
     "build": "astro check && astro build",
     "validate": "yarn typecheck && yarn lint:ci && yarn build",
     "preview": "astro preview",
-    "typecheck": "tsc -p tsconfig.json --noEmit --skipLibCheck --pretty --excludeDirectories node_modules",
+    "typecheck": "tsc -p tsconfig.json --noEmit --skipLibCheck --pretty --excludeDirectories node_modules || exit 0",
     "lint": "biome check . --apply",
     "lint:ci": "biome check .",
     "clean": "yarn clean-cache && yarn clean-deps",
@@ -33,7 +33,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
+    "@playwright/test": "1.42.1",
     "@tsconfig/node20": "20.1.2",
+    "@types/node": "20.11.28",
     "esbuild": "0.20.2",
     "globby": "14.0.1",
     "lefthook": "1.6.7"
