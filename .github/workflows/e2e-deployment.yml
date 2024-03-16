@@ -8,6 +8,8 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     steps:
       - uses: actions/checkout@v4
+      - name: set yarn version
+        run:  yarn set version stable
       - name: Install package manager
         run: corepack enable
       - name: print package manager version
