@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - next
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  FORCE_COLOR: true
+
+jobs:
+  changelog:
+    name: Changelog PR or Release
+    if: ${{ github.repository_owner == 'OskarHulter' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install package manager
+        run: corepack enable
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmScopes.my-org.npmRegistryServer "https://npm.pkg.github.com"
+          yarn config set npmScopes.my-org.npmAlwaysAuth true
+          yarn config set npmScopes.my-org.npmAuthToken $NPM_AUTH_TOKEN
+          yarn config set cacheFolder './.yarn/cache'
+          yarn config set nodeLinker node-modules
+          yarn config set enableTelemetry false
+          yarn config set enableGlobalCache false
+          yarn config set enableMirror true
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+          cache-dependency-path: |
+            ./yarn.lock
+            ./package.json
+            ./.yarnrc.yml
+      
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
+      - name: Run Biome
+        run: biome ci .
+      - name: Validate Packages
+        run: yarn validate
+
+      # - name: Create Release Pull Request or Publish
+      #   id: changesets
+      #   uses: changesets/action@v1
+      #   with:
+      #     # Note: yarn install after versioning is necessary to refresh lockfile
+      #     version: yarn run version
+      #     publish: yarn exec changeset publish
+      #     commit: "[ci] release"
+      #     title: "[ci] release"
+      #   env:
+      #     # Needs access to push to main
+      #     GITHUB_TOKEN: ${{ secrets.FREDKBOT_GITHUB_TOKEN }}
+      #     # Needs access to publish to npm
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # - name: Generate Announcement
+      #   id: message
+      #   if: steps.changesets.outputs.published == 'true'
+      #   env:
+      #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      #   run: node .github/scripts/announce.mjs '${{ steps.changesets.outputs.publishedPackages }}'
+
+      # - name: Send message on Discord
+      #   if: steps.changesets.outputs.published == 'true'
+      #   env:
+      #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      #   uses: Ilshidur/action-discord@0.3.2
+      #   with:
+      #     args: "${{ steps.message.outputs.DISCORD_MESSAGE }}"

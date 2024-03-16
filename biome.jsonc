@@ -1,23 +1,37 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.6.1/schema.json",
-  "organizeImports": {
-    "enabled": true
+  "files": {
+    "include": ["src/**", ".github/**"],
+    "ignore": ["node_modules", ".cache", ".astro", "dist", ".yarn"],
+    "maxSize": 9128312873
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
+      "complexity": {
+        "useLiteralKeys": "off"
+      },
       "suspicious": {
         "noCommentText": "warn",
         "noAssignInExpressions": "warn"
       },
       "style": {
-        "useBlockStatements": "warn",
+        "useBlockStatements": "off",
         "useShorthandArrayType": "warn",
         "noShoutyConstants": "warn",
         "noUnusedTemplateLiteral": "warn"
       }
     }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "formatWithErrors": true,
+    "lineWidth": 120,
+    "indentStyle": "space",
+    "ignore": ["node_modules", ".cache", ".astro", "dist", ".yarn"]
   },
   "javascript": {
     "parser": {
@@ -41,17 +55,8 @@
       "allowTrailingCommas": true
     }
   },
-  "files": {
-    "maxSize": 9128312873
-  },
-  "formatter": {
-    "enabled": true,
-    "indentWidth": 2,
-    "lineEnding": "lf",
-    "formatWithErrors": true,
-    "lineWidth": 120,
-    "indentStyle": "space",
-    "ignore": ["node_modules", ".cache", ".astro", "dist", ".yarn"]
+  "organizeImports": {
+    "enabled": true
   },
   "vcs": {
     "clientKind": "git",

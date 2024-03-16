@@ -3,18 +3,25 @@
   "name": "stressless-docs",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "yarn@4.1.1",
+  "engines": {
+    "node": ">=20.11.1",
+    "yarn": ">=4.1.1"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
-    "validate": "astro check && yarn typecheck && yarn lint",
+    "validate": "yarn typecheck && yarn lint:ci && yarn build",
     "preview": "astro preview",
-    "typecheck": "tsc --noEmit --skipLibCheck --pretty --build tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit --skipLibCheck --pretty --excludeDirectories node_modules",
     "lint": "biome check . --apply",
+    "lint:ci": "biome check .",
     "clean": "yarn clean-cache && yarn clean-deps",
     "clean-cache": "yarn cache clean",
     "clean-deps": "rm -rf ./node_modules",
-    "astro": "astro"
+    "astro": "astro",
+    "preinstall": "npx only-allow yarn"
   },
   "dependencies": {
     "@astrojs/check": "^0.5.9",
@@ -27,12 +34,23 @@
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
     "@tsconfig/node20": "20.1.2",
+    "esbuild": "0.20.2",
+    "globby": "14.0.1",
     "lefthook": "1.6.7"
   },
-  "engines": {
-    "node": "^20",
-    "yarn": "^4.1.1"
+  "peerDependencyRules": {
+    "ignoreMissing": [
+      "rollup",
+      "@babel/core",
+      "@babel/plugin-transform-react-jsx",
+      "vite",
+      "react",
+      "react-dom",
+      "@types/react",
+      "tslib",
+      "quill-delta",
+      "rxjs"
+    ]
   },
-  "packageManager": "yarn@4.1.1",
   "license": "MIT"
 }

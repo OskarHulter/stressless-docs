@@ -1,0 +1,66 @@
+name: Scripts
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "packages/astro/src/runtime/client/**/*"
+      - "!packages/astro/src/runtime/client/dev-toolbar/**/*"
+
+# Automatically cancel in-progress actions on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  bundle:
+    name: Bundle Size
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Checkout Main into tmp
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+
+      - name: Install package manager
+        run: corepack enable
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmScopes.my-org.npmRegistryServer "https://npm.pkg.github.com"
+          yarn config set npmScopes.my-org.npmAlwaysAuth true
+          yarn config set npmScopes.my-org.npmAuthToken $NPM_AUTH_TOKEN
+          yarn config set cacheFolder './.yarn/cache'
+          yarn config set nodeLinker node-modules
+          yarn config set enableTelemetry false
+          yarn config set enableGlobalCache false
+          yarn config set enableMirror true
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+          cache-dependency-path: |
+            ./yarn.lock
+            ./package.json
+            ./.yarnrc.yml
+      
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Check Bundle Size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { default: script } = await import('${{ github.workspace }}/.github/scripts/bundle-size.mjs')
+            await script({ github, context })

@@ -44,4 +44,4 @@ jobs:
     - name: Run Biome
       run: biome ci .
     - name: build to publish
-      run: yarn build
+      run: yarn validate
