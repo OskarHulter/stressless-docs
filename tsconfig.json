@@ -1,0 +1,21 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "extends": [
+      "@tsconfig/node20/tsconfig.json",
+      "astro/tsconfigs/strict"
+    ],
+    "include": [
+      "**/*.ts"
+    ],
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@content/*": [
+          "src/content/*"
+        ],
+        "@assets/*": [
+          "src/assets/*"
+        ]
+      }
+    }
+  }
