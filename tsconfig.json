@@ -11,6 +11,7 @@
     ".yarn"
   ],
   "compilerOptions": {
+    "allowUmdGlobalAccess": true,
     "verbatimModuleSyntax": true,
     "stripInternal": true,
     "paths": {
